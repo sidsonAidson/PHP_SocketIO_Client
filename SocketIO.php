@@ -74,7 +74,7 @@ class SocketIO
      * @param string|int null $port
      * @param string $path
      */
-    public function __construct($host = null, $port = null, $path = "/socket.io/EIO=3")
+    public function __construct($host = null, $port = null, $path = "/socket.io/?EIO=3")
     {
         $this->host = $host;
         $this->port = $port;
@@ -244,13 +244,11 @@ class SocketIO
      */
     public function getQueryParams()
     {
-        $query = '';
         if(count($this->queryParams) > 0)
         {
-            $query =  "?".http_build_query($this->queryParams);
+            $query = http_build_query($this->queryParams);
 
         }
-
 
         return $query;
     }
@@ -289,7 +287,7 @@ class SocketIO
         }
 
         $key = $this->generateKey();
-        $out = "GET {$this->path}{$this->getQueryParams()}&transport=websocket HTTP/1.1\r\n";
+        $out = "GET {$this->path}&{$this->getQueryParams()}&transport=websocket HTTP/1.1\r\n";
         $out.= "Host: {$this->host}:{$this->port}\r\n";
         $out.= "Upgrade: WebSocket\r\n";
         $out.= "Connection: Upgrade\r\n";
@@ -300,7 +298,8 @@ class SocketIO
         fwrite($fd, $out);
         // 101 switching protocols, see if echoes key
         $result= fread($fd,10000);
-
+    
+        $matches = []; // For <PHP7: array()
         preg_match('#Sec-WebSocket-Accept:\s(.*)$#mU', $result, $matches);
         $keyAccept = trim($matches[1]);
         $expectedResonse = base64_encode(pack('H*', sha1($key . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11')));
