@@ -74,7 +74,7 @@ class SocketIO
      * @param string|int null $port
      * @param string $path
      */
-    public function __construct($host = null, $port = null, $path = "/socket.io/EIO=3")
+    public function __construct($host = null, $port = null, $path = "/socket.io/?EIO=3")
     {
         $this->host = $host;
         $this->port = $port;
@@ -287,7 +287,7 @@ class SocketIO
         }
 
         $key = $this->generateKey();
-        $out = "GET {$this->path}?{$this->getQueryParams()}&transport=websocket HTTP/1.1\r\n";
+        $out = "GET {$this->path}&{$this->getQueryParams()}&transport=websocket HTTP/1.1\r\n";
         $out.= "Host: {$this->host}:{$this->port}\r\n";
         $out.= "Upgrade: WebSocket\r\n";
         $out.= "Connection: Upgrade\r\n";
